@@ -1,0 +1,94 @@
+@startuml P
+
+enum Stat
+enum PokemonType
+enum Nature
+
+interface PokemonMoveEffect {
+    + RunEffect(BattleField, Pokemon) : void
+}
+
+interface BattleFieldProperty {
+
+}
+
+interface PokemonAbility {
+
+}
+
+abstract class Item {}
+
+class StatChange {
+    - Pokemon wrappee
+    - int notch
+}
+
+abstract class Status{}
+
+class PokemonMove {
+    - String Name
+    - String Description
+    
+    - int Power
+    - int Accuracy
+    - int MaxPP
+    - int PP
+}
+
+class BattleField {}
+
+class PokemonSpecies {
+    - String Name
+}
+class Pokemon extends PokemonSpecies {
+    - String Nickname
+    - int Level
+
+    - int MaxHP
+    - int HP
+
+    - int BaseAtk
+    - int Atk
+    - int BaseDef
+    - int Def
+    - int BaseSpA
+    - int SpA
+    - int BaseSpD
+    - int SpD
+    - int BaseSpe
+    - int Spe
+}
+
+
+class Trainer{
+    - String Name
+}
+
+class Music {}
+
+class PokemonBattle {}
+
+PokemonSpecies "0..*" -- "1..*" PokemonMove
+PokemonSpecies -- "1..2" PokemonType
+PokemonSpecies -- "1..3" PokemonAbility
+Pokemon "1" -- "0..1" Item
+Pokemon "0..*" -- "1..4" PokemonMove
+Pokemon -- "1" Nature
+Pokemon -- "1" PokemonAbility
+Pokemon <|-- StatChange
+Pokemon <|-- Status
+
+StatChange -- "1" Stat
+Nature -- "2" Stat
+
+PokemonType "1" -- PokemonMove
+PokemonMoveEffect "0..1" -- "1..*" PokemonMove
+PokemonBattle --* BattleField
+Pokemon <-- BattleField
+BattleFieldProperty <-- BattleField
+Trainer "1" -- "1..6" Pokemon
+Trainer "2..6" -- "1" PokemonBattle
+Trainer "1" -- "0..*" Item
+PokemonBattle -- Music
+
+@enduml

@@ -109,3 +109,61 @@ class Pokemon:
         return self.__Item
     
     # Setters
+    def set_nickname(self, nickname: str):
+        self.__Nickname = nickname
+        pass
+    def set_level(self, level: int):
+        if level > 0 and level <= 100:
+            self.__Level = level
+        else:
+            raise ValueError("Level must be between 1 and 100.")
+        pass
+    def set_max_hp(self, mhp : int):
+        self.__MaxHP = mhp
+        pass
+    def set_hp(self, hp : int):
+        self.__HP = hp
+        pass
+    def set_base_atk(self, atk: int):
+        self.__Atk = atk
+        pass
+    def set_base_def(self, defense: int):
+        self.__Def = defense
+        pass
+    def set_base_spa(self, spa: int):
+        self.__SpA = spa
+        pass
+    def set_base_spd(self, spd: int):
+        self.__SpD = spd
+        pass
+    def set_base_spe(self, spe: int):
+        self.__Spe = spe
+        pass
+    def set_ability(self, ability: PokemonAbility):
+        if ability in self.__Species.get_abilities():
+            self.__Ability = ability
+        else:
+            raise ValueError("Ability must be a valid ability for the given species.")
+        pass
+    def set_nature(self, nature: Nature):
+        self.__Nature = nature
+        pass
+    def set_moveset(self, moveset: list[PokemonMove]):
+        checked_moveset = []
+        possible_moves = self.__Species.get_movepool().keys()
+        for move in moveset:
+            if move in possible_moves:
+                checked_moveset.append(move)
+            else:
+                raise ValueError(f"Move '{move}' is not valid for the given species.")
+        self.__moveset = checked_moveset
+        pass
+    def set_item(self, item: Item):
+        if item.get_category() in []: # TODO: add item categories here
+            self.__Item = item
+        else:
+            raise ValueError(f"Item '{item}' is not valid for the given species.")
+        pass
+    
+    # ---------------------------------------------------------------------------------------------
+

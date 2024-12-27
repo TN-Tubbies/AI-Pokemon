@@ -1,22 +1,42 @@
 @startuml P
+hide enum empty member
+hide metaclass empty member
+
+metaclass ABC
 
 enum Stat
 enum PokemonType
 enum Nature
-
-interface PokemonMoveEffect {
-    + RunEffect(BattleField, Pokemon) : void
-}
+enum TargetCategory
+enum BattleState
 
 interface BattleFieldProperty {
 
 }
 
-interface PokemonAbility {
+abstract class PokemonAbility extends ABC {
+    - String id
+    - Pokemon owner
 
+    + {abstract} run_ability(BattleState, BattleField) : void 
 }
 
-abstract class Item {}
+abstract class PokemonMoveEffect extends ABC {
+    - String id
+
+    + get_id() : String
+    + get_target_category() : TargetCategory
+    + set_id(String) : void
+    + set_target_category(TargetCategory) : void
+
+    + {abstract} clone() : void
+    + {abstract} RunEffect() : void
+}
+
+abstract class Item {
+    + {abstract} get_category() : String
+    + {abstract} use(Pokemon) : void
+}
 
 class StatChange {
     - Pokemon wrappee
@@ -33,12 +53,42 @@ class PokemonMove {
     - int Accuracy
     - int MaxPP
     - int PP
+
+    + getName() : String
+    + getDescription() : String
+    + getType() : PokemonType
+    + getPower() : int
+    + getAccuracy() : int
+    + getMaxPP() : int
+    + getPP() : int
+    + getTargetCategory() : TargetCategory
+    + getEffect() : PokemonMoveEffect
+
+    + setName(String) : void
+    + setDescription(String) : void
+    + setType(PokemonType) : void
+    + setPower(int) : void
+    + setAccuracy(int) : void
+    + setMaxPP(int) : void
+    + setPP(int) : void
+    + setTargetCategory(TargetCategory) : void
+    + setEffect(PokemonMoveEffect) : void
 }
 
 class BattleField {}
 
 class PokemonSpecies {
     - String Name
+    
+    + get_name() : String
+    + get_abilities() : ArrayList<PokemonAbility>
+    + get_types() : ArrayList<PokemonType>
+    + get_movepool() : ArrayList<Pair<String, PokemonMove>>
+
+    + set_name(String) : void
+    + set_abilities(ArrayList<PokemonAbility>) : void
+    + set_types(ArrayList<PokemonType>) : void
+    + set_movepool(ArrayList<Pair<String, PokemonMove>>) : void
 }
 class Pokemon extends PokemonSpecies {
     - String Nickname
@@ -57,16 +107,69 @@ class Pokemon extends PokemonSpecies {
     - int SpD
     - int BaseSpe
     - int Spe
-}
 
+    + get_species() : PokemonSpecies
+    + get_nickname() : String
+    + get_level() : int
+    + get_max_hp() : int
+    + get_hp() : int
+    + get_base_atk() : int
+    + get_base_def() : int
+    + get_base_spa() : int
+    + get_base_spd() : int
+    + get_base_spe() : int
+    + get_atk() : int
+    + get_def() : int
+    + get_spa() : int
+    + get_spd() : int
+    + get_spe() : int
+    + get_acc() : int
+    + get_eva() : int
+    + get_ability() : PokemonAbility
+    + get_nature() : Nature
+    + get_moveset() : ArrayList<PokemonMove>
+    + get_item() : Item
+    
+    + set_species(PokemonSpecies) : void
+    + set_nickname(String) : void
+    + set_level(int) : void
+    + set_max_hp() : void
+    + set_hp() : void
+    + set_base_atk() : void
+    + set_base_def() : void
+    + set_base_spa() : void
+    + set_base_spd() : void
+    + set_base_spe() : void
+    + set_ability(PokemonAbility) : void
+    + set_nature(Nature) : void
+    + set_moveset(ArrayList<PokemonMove>) : void
+    + set_item(Item) : void
+}
 
 class Trainer{
     - String Name
+    - ArrayList<Pokemon> Team
+    - ArrayList<Item> Items
+
+    + get_name() : String
+    + get_team() : ArrayList<Pokemon>
+    + get_item() : ArrayList<Item>
+
+    + use_item(Item, Pokemon) : void
+    + has_lost() : boolean
 }
 
 class Music {}
 
-class PokemonBattle {}
+class PokemonBattle {
+    - int CurrentTurnID
+    - BattleState CurrentState
+    - ArrayList<Trainer> team1
+    - ArrayList<Trainer> team2
+
+    - handle_turn() : BattleState
+    + run_battle() : int
+}
 
 PokemonSpecies "0..*" -- "1..*" PokemonMove
 PokemonSpecies -- "1..2" PokemonType
@@ -83,6 +186,7 @@ Nature -- "2" Stat
 
 PokemonType "1" -- PokemonMove
 PokemonMoveEffect "0..1" -- "1..*" PokemonMove
+PokemonMoveEffect -- "1" TargetCategory
 PokemonBattle --* BattleField
 Pokemon <-- BattleField
 BattleFieldProperty <-- BattleField
@@ -90,5 +194,6 @@ Trainer "1" -- "1..6" Pokemon
 Trainer "2..6" -- "1" PokemonBattle
 Trainer "1" -- "0..*" Item
 PokemonBattle -- Music
+PokemonBattle -- "1" BattleState
 
 @enduml

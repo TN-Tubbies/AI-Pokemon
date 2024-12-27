@@ -9,9 +9,48 @@ enum PokemonType
 enum Nature
 enum TargetCategory
 enum BattleState
+enum BattleMode
 
-interface BattleFieldProperty {
+abstract class BattleAction extends ABC {
+    + {abstract} get_id() : String
+    + {abstract} get_priority() : int
+}
+class SwitchAction extends BattleAction {
+    - Pokemon switch_in
+    - Pokemon switch_out
+    
+    + get_id() : String
+    + get_priority() : int
+    + get_switch_in() : Pokemon
+    + get_switch_out() : Pokemon
+}
+class UseItemAction extends BattleAction {
+    - Pokemon target
+    - Item item
+    
+    + get_id() : String
+    + get_priority() : int
+    + get_target() : Pokemon
+    + get_item() : Item
+}
+class PokemonUseMoveAction extends BattleAction {
+    - Pokemon user
+    - ArrayList<Pokemon> target
+    - PokemonMove move
+    
+    + get_id() : String
+    + get_priority() : int
+    + get_user() : Pokemon
+    + get_target() : ArrayList<Pokemon>
+    + get_move() : PokemonMove
+}
 
+abstract class BattleFieldProperty extends ABC {
+    - String id
+    - BattleField BattleField
+
+    + get_id() : String
+    + {abstract} apply() : void
 }
 
 abstract class PokemonAbility extends ABC {
@@ -53,6 +92,7 @@ class PokemonMove {
     - int Accuracy
     - int MaxPP
     - int PP
+    - int Priority
 
     + getName() : String
     + getDescription() : String
@@ -61,6 +101,7 @@ class PokemonMove {
     + getAccuracy() : int
     + getMaxPP() : int
     + getPP() : int
+    + getPriority() : int
     + getTargetCategory() : TargetCategory
     + getEffect() : PokemonMoveEffect
 
@@ -71,11 +112,32 @@ class PokemonMove {
     + setAccuracy(int) : void
     + setMaxPP(int) : void
     + setPP(int) : void
+    + setPriority(int) : void
     + setTargetCategory(TargetCategory) : void
     + setEffect(PokemonMoveEffect) : void
 }
 
-class BattleField {}
+class BattleField {
+    - ArrayList<BattleFieldProperty> properties
+    - BattleMode battle_mode
+    - ArrayList<Pokemon> side1
+    - ArrayList<Pokemon> side2
+
+    - get_side_bound() : int
+    + get_properties() : ArrayList<BattleFieldProperties>
+    + get_property_ids() : ArrayList<String>
+    + get_side(int) : ArrayList<Pokemon>
+    + get_side_id_from_pokemon(String) : int
+
+    + add_property(BattleFieldProperty) : void
+    + remove_property(BattleFieldProperty) : void
+    + clean_property() : void
+    + add_pokemon_to_side(int, Pokemon) : void
+    + remove_pokemon_from_side(int, Pokemon) : void
+
+    - run_action(Trainer, BattleAction) : void
+    + run_actions() : void
+}
 
 class PokemonSpecies {
     - String Name
@@ -146,17 +208,26 @@ class Pokemon extends PokemonSpecies {
     + set_item(Item) : void
 }
 
-class Trainer{
+abstract class Trainer extends ABC {
     - String Name
     - ArrayList<Pokemon> Team
     - ArrayList<Item> Items
+    - BattleAction CurrentAction
 
     + get_name() : String
     + get_team() : ArrayList<Pokemon>
     + get_item() : ArrayList<Item>
+    + get_current_action() : BattleAction
 
     + use_item(Item, Pokemon) : void
     + has_lost() : boolean
+    + {abstract} choose_action() : void
+}
+class PlayerTrainer extends Trainer {
+    + choose_action() : void
+}
+class AITrainer extends Trainer {
+    + choose_action() : void
 }
 
 class Music {}
@@ -190,10 +261,17 @@ PokemonMoveEffect -- "1" TargetCategory
 PokemonBattle --* BattleField
 Pokemon <-- BattleField
 BattleFieldProperty <-- BattleField
+
 Trainer "1" -- "1..6" Pokemon
 Trainer "2..6" -- "1" PokemonBattle
 Trainer "1" -- "0..*" Item
+Trainer "0..*" -- "1" BattleAction
+
 PokemonBattle -- Music
 PokemonBattle -- "1" BattleState
+PokemonBattle -- "1" BattleMode
+
+note "For Abstract Classes in Python" as N1
+N1 .. ABC
 
 @enduml

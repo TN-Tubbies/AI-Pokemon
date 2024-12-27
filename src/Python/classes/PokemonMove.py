@@ -4,7 +4,7 @@ from TargetCategory import TargetCategory
 
 class PokemonMove:
     def __init__(self, name:str, description:str, type:PokemonType,
-                 power:int, accuracy:int, maxPP:int, 
+                 power:int, accuracy:int, maxPP:int, priority:int,
                  targetCategory:TargetCategory, effect:PokemonMoveEffect=None):
         self.__Name = name
         self.__Description = description
@@ -13,6 +13,7 @@ class PokemonMove:
         self.__Accuracy = accuracy
         self.__MaxPP = maxPP
         self.__PP = maxPP
+        self.__Priority = priority
         self.__TargetCategory = targetCategory
         self.__effect = effect
         pass
@@ -32,6 +33,8 @@ class PokemonMove:
         return self.__MaxPP
     def getPP(self) -> int:
         return self.__PP
+    def getPriority(self) -> int:
+        return self.__Priority
     def getTargetCategory(self) -> TargetCategory:
         return self.__TargetCategory
     def getEffect(self) -> PokemonMoveEffect:
@@ -63,6 +66,12 @@ class PokemonMove:
         elif self.__PP > self.__MaxPP:
             self.__PP = self.__MaxPP
         pass
+    def setPriority(self, priority:int):
+        if priority < -6 or priority > 6:
+            raise ValueError("Priority out of range: -6 <= priority <= 6.")
+        else:
+            self.__Priority = priority
+        pass
     def setTargetCategory(self, targetCategory:TargetCategory):
         self.__TargetCategory = targetCategory
         pass
@@ -73,11 +82,12 @@ class PokemonMove:
     # ---------------------------------------------------------------------------------------------
 
     def is_target_valid(self, target:list) -> bool:
+        # TODO: write this function
         return
 
     def run_move(self, target:list) -> None:
         if self.is_target_valid(target):
-
+            # TODO: finish this function
             ran_effect = self.__effect.clone(target)
             ran_effect.run_effect()
             pass

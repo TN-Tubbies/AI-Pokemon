@@ -23,7 +23,7 @@ class PokemonBattle:
 
         if modifiers != {}:
             for key in modifiers.keys():
-                print(key)  # FIXME: add modifiers
+                print(key)  # TODO: add modifiers
         pass
 
     def run_battle(self) -> int:

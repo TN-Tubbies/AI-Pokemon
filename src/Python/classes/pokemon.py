@@ -44,6 +44,22 @@ class Pokemon:
                 self.__Item = item
 
         pass
+    def __init__(self, pokemon):
+        self.__Species = pokemon.get_species()
+        self.__Nickname = pokemon.get_nickname()
+        self.__Level = pokemon.get_level()
+        self.__Atk = pokemon.get_base_atk()
+        self.__Def = pokemon.get_base_def()
+        self.__SpA = pokemon.get_base_spa()
+        self.__SpD = pokemon.get_base_spd()
+        self.__Spe = pokemon.get_base_spe()
+        self.__MaxHP = pokemon.get_max_hp()
+        self.__HP = pokemon.get_hp()
+        self.__Ability = pokemon.get_ability()
+        self.__Nature = pokemon.get_nature()
+        self.__Item = pokemon.get_item()
+        self.__moveset = pokemon.get_moveset()
+        pass
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -167,3 +183,9 @@ class Pokemon:
     
     # ---------------------------------------------------------------------------------------------
 
+    def has_status(self) -> bool:
+        return False
+
+    def run_move(self, move:PokemonMove) -> None:
+        # TODO: write this function
+        pass

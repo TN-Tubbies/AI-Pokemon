@@ -72,17 +72,46 @@ abstract class PokemonMoveEffect extends ABC {
     + {abstract} RunEffect() : void
 }
 
-abstract class Item {
+abstract class Item extends ABC{
+    - String name
+    - String description
+
+    + get_name() : String
+    + get_description() : String
     + {abstract} get_category() : String
-    + {abstract} use(Pokemon) : void
+    + {abstract} use_by_trainer(Pokemon) : void
+    + {abstract} use_when_held(Pokemon, PokemonMove) : void
+}
+abstract class Berry extends Item {
+    + get_category() : String
+    + {abstract} use_by_trainer(Pokemon) : void
+    + {abstract} use_when_held(Pokemon, PokemonMove) : void
+}
+abstract class Medicine extends Item {
+    + get_category() : String
+    + {abstract} use_by_trainer(Pokemon) : void
+    + use_when_held(Pokemon, PokemonMove) : void
+}
+abstract class EvolutionItem extends Item {
+    + get_category() : String
+    + {abstract} use_by_trainer(Pokemon) : void
+    + {abstract} use_when_held(Pokemon, PokemonMove) : void
+}
+abstract class BoostingItem extends Item {
+    + get_category() : String
+    + {abstract} use_by_trainer(Pokemon) : void
+    + {abstract} use_when_held(Pokemon, PokemonMove) : void
+}
+abstract class FightingItem extends Item {
+    + get_category() : String
+    + {abstract} use_by_trainer(Pokemon) : void
+    + {abstract} use_when_held(Pokemon, PokemonMove) : void
 }
 
 class StatChange {
     - Pokemon wrappee
     - int notch
 }
-
-abstract class Status{}
 
 class PokemonMove {
     - String Name
@@ -115,6 +144,19 @@ class PokemonMove {
     + setPriority(int) : void
     + setTargetCategory(TargetCategory) : void
     + setEffect(PokemonMoveEffect) : void
+    
+    + is_temporary() : boolean
+    + is_target_valid(ArrayList<Pokemon>) : boolean
+    + run_move(ArrayList<Pokemon>) : void
+}
+class TemporaryChangedMove extends PokemonMove {
+    - int lastingTurn
+
+    + getLastingTurn() : int
+    + setLastingTurn(int) : void
+
+    + is_temporary() : boolean
+    + manage_expiration() : void
 }
 
 class BattleField {
@@ -206,6 +248,27 @@ class Pokemon extends PokemonSpecies {
     + set_nature(Nature) : void
     + set_moveset(ArrayList<PokemonMove>) : void
     + set_item(Item) : void
+
+    + has_status() : boolean
+    + run_move(PokemonMove) : void
+}
+abstract class Status extends Pokemon {
+    - String status_name
+    - int status_duration
+    - int status_trigger_probability
+
+    + get_status_name() : String
+    + get_status_duration() : int
+    + get_status_probability() : float
+
+    + set_status_duration(int) : void
+    + set_status_probability(float) : void
+
+    + has_status() : boolean
+    + manage_status() : void
+    + cure_status() : void
+    + {abstract} run_move(PokemonMove) : void
+    + {abstract} trigger_status() : void
 }
 
 abstract class Trainer extends ABC {
@@ -250,7 +313,6 @@ Pokemon "0..*" -- "1..4" PokemonMove
 Pokemon -- "1" Nature
 Pokemon -- "1" PokemonAbility
 Pokemon <|-- StatChange
-Pokemon <|-- Status
 
 StatChange -- "1" Stat
 Nature -- "2" Stat
